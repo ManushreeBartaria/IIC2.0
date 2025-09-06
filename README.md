@@ -52,6 +52,8 @@ A Digital Police Station & Public Safety Management System that modernizes case 
 
 - Node.js (v18 or higher)
 - npm (v9 or higher)
+- Python (v3.12 or higher)
+- pip (latest version)
 
 ### Installation
 
@@ -61,26 +63,43 @@ A Digital Police Station & Public Safety Management System that modernizes case 
    cd IIC2.0
    ```
 
-2. Install dependencies:
+2. Install Frontend Dependencies:
    ```bash
+   cd frontend
    npm install
+   ```
+
+3. Install Backend Dependencies:
+   ```bash
+   cd ../backend/app
+   pip install -r requirements.txt
    ```
 
 ### Running the Application
 
-1. For development (with hot reload):
+1. Start the Backend Server:
    ```bash
+   cd backend/app
+   python main.py
+   ```
+   The FastAPI server will start at http://localhost:8000
+
+2. Start the Frontend Development Server:
+   ```bash
+   cd frontend
    npm run dev
    ```
    This will start the development server at http://localhost:5173
 
-2. For production build:
+3. For Frontend Production Build:
    ```bash
+   cd frontend
    npm run build
    ```
 
-3. To preview production build:
+4. To Preview Frontend Production Build:
    ```bash
+   cd frontend
    npm run preview
    ```
 
@@ -88,20 +107,40 @@ A Digital Police Station & Public Safety Management System that modernizes case 
 
 ```
 IIC2.0/
-├── src/
-│   ├── components/    # React components
-│   ├── App.tsx       # Main application component
-│   └── main.tsx      # Application entry point
-├── public/           # Static assets
-├── index.html        # HTML template
-└── package.json      # Project dependencies and scripts
+├── frontend/
+│   ├── src/
+│   │   ├── components/    # React components
+│   │   ├── App.tsx       # Main application component
+│   │   └── main.tsx      # Application entry point
+│   ├── public/           # Static assets
+│   ├── index.html        # HTML template
+│   └── package.json      # Frontend dependencies and scripts
+│
+├── backend/
+│   └── app/
+│       ├── api/          # API routes and dependencies
+│       ├── core/         # Core application logic
+│       ├── database/     # Database models and connections
+│       ├── models/       # Data models
+│       ├── services/     # Business logic services
+│       ├── utils/        # Utility functions
+│       ├── main.py       # Backend entry point
+│       └── requirements.txt  # Python dependencies
 ```
 
 ## Tech Stack
 
+### Frontend
 - React 18.x
 - TypeScript
 - Tailwind CSS
 - Vite
-- Node.js
+
+### Backend
+- Python 3.12
+- FastAPI
+- SQLAlchemy (ORM)
+
+### Database
+- PostgreSQL
 
