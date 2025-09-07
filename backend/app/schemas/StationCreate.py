@@ -4,13 +4,15 @@ class StationCreate(BaseModel):
     name: str
     location: str
     
-    class Config:
-        orm_mode = True
+    model_config = {
+        "from_attributes": True
+    }
 
 class StationResponse(BaseModel):
     message: str
     station_id: int
     
-    class Config:
-        orm_mode = True
+    model_config = {
+        "from_attributes": True
+    }
         

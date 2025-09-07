@@ -5,29 +5,31 @@ class PoliceMemberCreate(BaseModel):
     password: str
     station_id: int
     
-    class Config:
-        orm_mode = True
+    model_config = {
+        "from_attributes": True
+    }
 
 class PoliceMemberResponse(BaseModel):
     message: str
     member_id: int
     
-    class Config:
-        orm_mode = True
+    model_config = {
+        "from_attributes": True
+    }
 
-class policeauth(BaseModel):
+class PoliceAuth(BaseModel):
     station_id: int
     member_id: int
     password: str
     
-    class Config:
-        orm_mode = True
+    model_config = {
+        "from_attributes": True
+    }
         
 class PoliceAuthResponse(BaseModel):
-    message: str
-    station_id: int
-    member_id: int
-    member_name: str
+    access_token: str
+    token_type: str
     
-    class Config:
-        orm_mode = True         
+    model_config = {
+        "from_attributes": True
+    }    

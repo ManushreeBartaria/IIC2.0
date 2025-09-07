@@ -1,11 +1,23 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.database.connection import get_db
+from app.utils.security import create_access_token, verify_password, verify_access_token
+from fastapi.security import OAuth2PasswordBearer
 from app.models.policemember import PoliceMember
 from app.models.policestation import PoliceStation
 from app.schemas.StationCreate import StationCreate, StationResponse
-from app.schemas.PoliceMemberCreate import PoliceMemberCreate, PoliceMemberResponse, policeauth, PoliceAuthResponse
-router = APIRouter()    
+from app.schemas.PoliceMemberCreate import PoliceMemberCreate, PoliceMemberResponse, PoliceAuth, PoliceAuthResponse
+
+router = APIRouter()
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/policeauth/policeauth")
+
+def get_current_user(token: str = Depends(oauth2_scheme)):
+    payload = verify_access_token(token)
+    if not payload:
+        raise HTTPException(status_code=401, detail="Invalid or expired token")
+    return payload
+
+    
 
 @router.post("/policestationdetails", response_model=StationResponse)
 def policestationdetails(station: StationCreate, db: Session = Depends(get_db)):
@@ -24,7 +36,7 @@ def add_policemember(member: PoliceMemberCreate, db: Session = Depends(get_db)):
     return {"message": "Police member added successfully", "member_id": new_member.member_id}
   
 @router.post("/policeauth", response_model=PoliceAuthResponse)
-def policeauth(police:policeauth, db: Session = Depends(get_db)):
+def policeauth(police: PoliceAuth, db: Session = Depends(get_db)):
     member = db.query(PoliceMember).filter(
     PoliceMember.member_id == police.member_id,
     PoliceMember.station_id == police.station_id,
@@ -32,11 +44,10 @@ def policeauth(police:policeauth, db: Session = Depends(get_db)):
 ).first()
     if not member:
       raise HTTPException(status_code=401, detail="Invalid credentials")
-    return {
-    "message": "Login successful",
-    "station_id": member.station_id,
-    "member_id": member.member_id,
-    "member_name": member.name
-}
+    access_token = create_access_token({"member_id": member.member_id, "station_id": member.station_id})
+    return {"access_token": access_token, "token_type": "bearer"}
 
-
+@router.get("/allmembers/{station_id}", response_model=list[PoliceMemberResponse])
+def get_all_members(station_id: int, db: Session = Depends(get_db)):
+    members = db.query(PoliceMember).filter(PoliceMember.station_id == station_id).all()
+    return members
