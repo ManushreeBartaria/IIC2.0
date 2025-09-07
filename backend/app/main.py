@@ -9,7 +9,7 @@ app = FastAPI()
 
 Base.metadata.create_all(bind=engine)
 
-app.include_router(policememberroutes.router, prefix="/policeauth", tags=["Authentication","Add Police Member"])
+app.include_router(policememberroutes.router, prefix="/policeauth", tags=["Police Authentication"])
 app.include_router(firroutes.router, prefix="/fir", tags=["FIR Registration"])
 app.include_router(citizenroutes.router, prefix="/citizen", tags=["Citizen"])
 
