@@ -33,3 +33,9 @@ class PoliceAuthResponse(BaseModel):
     model_config = {
         "from_attributes": True
     }    
+    
+class MemberDetails(BaseModel):
+    name: str
+    model_config = {
+        "from_attributes": True
+    }    
