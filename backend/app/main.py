@@ -2,13 +2,14 @@ from fastapi import FastAPI
 from app.database.connection import engine, Base
 from app.models import Trial
 from app.models import PoliceStation, PoliceMember
-from app.api.routes import policememberroutes
+from app.api.routes import policememberroutes,firroutes
 
 app = FastAPI()
 
 Base.metadata.create_all(bind=engine)
 
 app.include_router(policememberroutes.router, prefix="/policeauth", tags=["Authentication","Add Police Member"])
+app.include_router(firroutes.router, prefix="/fir", tags=["FIR Registration"])
 
 @app.get("/")
 def read_root():
