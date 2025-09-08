@@ -68,3 +68,31 @@ class ComplaintDetail(BaseModel):
     model_config = {
         "from_attributes": True
     }
+
+class ComplaintFollowupCreate(BaseModel):
+    note: str
+    requested_action: Optional[str] = None
+
+    model_config = {
+        "from_attributes": True
+    }
+
+class ComplaintFollowupResponse(BaseModel):
+    message: str
+    followup_id: int
+
+    model_config = {
+        "from_attributes": True
+    }
+
+class ComplaintFollowupDetail(BaseModel):
+    followup_id: int
+    complaint_id: int
+    tourist_id: int
+    note: str
+    requested_action: Optional[str] = None
+    created_at: datetime
+
+    model_config = {
+        "from_attributes": True
+    }

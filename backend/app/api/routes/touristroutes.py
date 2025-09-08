@@ -9,6 +9,11 @@ from typing import List, Optional
 from datetime import datetime
 from app.models.complaint import complaint as ComplaintModel
 from app.schemas.complaint import ComplaintCreate, ComplaintResponse, ComplaintDetail
+from app.models.complaint import complaint as ComplaintModel, complaint_followup as ComplaintFollowupModel
+from app.schemas.complaint import (
+    ComplaintCreate, ComplaintResponse, ComplaintDetail,
+    ComplaintFollowupCreate, ComplaintFollowupResponse, ComplaintFollowupDetail
+)
 
 
 router = APIRouter()
@@ -121,4 +126,68 @@ def get_complaint_detail(
     if comp.tourist_id != tourist_id:
         raise HTTPException(status_code=403, detail="Not authorized to view this complaint")
     return comp
+
+@router.post("/tourist/complaint/{complaint_id}/followup", response_model=ComplaintFollowupResponse)
+def add_complaint_followup(
+    complaint_id: int,
+    followup_in: ComplaintFollowupCreate,
+    token_payload: dict = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    tourist_id = token_payload.get("tourist_id")
+    if not tourist_id:
+        raise HTTPException(status_code=401, detail="Invalid token payload: tourist_id missing")
+
+    comp = db.query(ComplaintModel).filter(ComplaintModel.complaint_id == complaint_id).first()
+    if not comp:
+        raise HTTPException(status_code=404, detail="Complaint not found")
+
+    if comp.tourist_id != tourist_id:
+        raise HTTPException(status_code=403, detail="Not authorized to add followup to this complaint")
+
+    new_followup = ComplaintFollowupModel(
+        complaint_id=complaint_id,
+        tourist_id=tourist_id,
+        note=followup_in.note,
+        requested_action=followup_in.requested_action
+    )
+    db.add(new_followup)
+    db.commit()
+    db.refresh(new_followup)
+
+    return {"message": "Follow-up registered successfully", "followup_id": new_followup.followup_id}
+
+
+@router.get("/tourist/complaint/{complaint_id}/followups", response_model=list[ComplaintFollowupDetail])
+def list_complaint_followups(
+    complaint_id: int,
+    token_payload: dict = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    tourist_id = token_payload.get("tourist_id")
+    if not tourist_id:
+        raise HTTPException(status_code=401, detail="Invalid token payload: tourist_id missing")
+
+    comp = db.query(ComplaintModel).filter(ComplaintModel.complaint_id == complaint_id).first()
+    if not comp:
+        raise HTTPException(status_code=404, detail="Complaint not found")
+    if comp.tourist_id != tourist_id:
+        raise HTTPException(status_code=403, detail="Not authorized to view followups for this complaint")
+
+    followups = db.query(ComplaintFollowupModel).filter(ComplaintFollowupModel.complaint_id == complaint_id).order_by(ComplaintFollowupModel.created_at.desc()).all()
+    return followups
+
+
+@router.get("/tourist/followups", response_model=list[ComplaintFollowupDetail])
+def list_my_followups(
+    token_payload: dict = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    tourist_id = token_payload.get("tourist_id")
+    if not tourist_id:
+        raise HTTPException(status_code=401, detail="Invalid token payload: tourist_id missing")
+
+    followups = db.query(ComplaintFollowupModel).filter(ComplaintFollowupModel.tourist_id == tourist_id).order_by(ComplaintFollowupModel.created_at.desc()).all()
+    return followups
+
 
