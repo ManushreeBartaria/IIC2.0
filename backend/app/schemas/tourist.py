@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from typing import Optional
+from .Fir import FIRProgressResponse
 
 class TouristCreate(BaseModel):
 
@@ -38,3 +39,15 @@ class TouristAuthResponse(BaseModel):
     model_config = {
         "from_attributes": True
     }
+    
+class touristcheckfirrequest(BaseModel):
+    fir_id: str
+    model_config = {
+        "from_attributes": True
+    }    
+    
+class touristcheckfirresponse(BaseModel):
+     progress: int
+     model_config = {
+        "from_attributes": True
+     }

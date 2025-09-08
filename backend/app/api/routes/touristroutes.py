@@ -5,7 +5,9 @@ from app.utils.security import create_access_token, verify_password, verify_acce
 from fastapi.security import OAuth2PasswordBearer
 from app.models.tourist import tourist
 from app.schemas.tourist import TouristCreate, TouristResponse, TouristAuth, TouristAuthResponse
+from app.schemas.tourist import touristcheckfirrequest, touristcheckfirresponse
 from typing import List, Optional
+from app.models.firregistation import FirRegistration, FIRProgress
 
 router = APIRouter()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/tourist/touristAuth")
@@ -63,3 +65,12 @@ def tourist_auth(tourist_member: TouristAuth, db: Session = Depends(get_db)):
 
     access_token = create_access_token({"tourist_id": member.tourist_id})
     return {"access_token": access_token, "token_type": "bearer"}
+
+@router.post("/touristcheckfir", response_model=touristcheckfirresponse)  
+def check_fir(request: touristcheckfirrequest, current_user: dict = Depends(get_current_user), db: Session = Depends(get_db)):
+    progress_entry = db.query(FIRProgress).filter(FIRProgress.fir_id == request.fir_id).first()
+
+    if not progress_entry:
+        raise HTTPException(status_code=404, detail="Progress not found for this FIR")
+
+    return {"progress": progress_entry.progress}
