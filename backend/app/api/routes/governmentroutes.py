@@ -6,7 +6,7 @@ from fastapi.security import OAuth2PasswordBearer
 from app.models.citizen import citizen
 from app.schemas.citizen import citizenCreate, citizenResponse, citizenAuth, citizenauthresponse
 from app.models.government import government
-from app.schemas.government import govermentCreate, governmentResponse, governmentAuth, governmentauthresponse
+from app.schemas.goverment import govermentCreate, governmentResponse, governmentAuth, governmentauthresponse
 from typing import List
 
 router = APIRouter()
@@ -19,12 +19,12 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
     return payload
 
 @router.post("/addgovernment", response_model=governmentResponse)
-def add_government(member: governmentCreate, db: Session = Depends(get_db)):
+def add_government(member: govermentCreate, db: Session = Depends(get_db)):
     new_member = government(government_id=member.government_id, password=member.password)
     db.add(new_member)
     db.commit()
     db.refresh(new_member)
-    return {"message": "Government added successfully", "government_id": new_member.government_id}
+    return {"message": "Government added successfully"}
   
 @router.post("/governmentAuth", response_model=governmentauthresponse)
 def governmentauth(government_member: governmentAuth, db: Session = Depends(get_db)):

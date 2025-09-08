@@ -10,13 +10,13 @@ class govermentCreate(BaseModel):
 
 class governmentResponse(BaseModel):
     message: str
-    government_id: int
     
     model_config = {
         "from_attributes": True
     }
 
 class governmentAuth(BaseModel):
+    government_id: int
     password: str
     
     model_config = {
@@ -24,7 +24,8 @@ class governmentAuth(BaseModel):
     }
         
 class governmentauthresponse(BaseModel):
-    message: str
+    access_token: str
+    token_type: str
     
     model_config = {
         "from_attributes": True
