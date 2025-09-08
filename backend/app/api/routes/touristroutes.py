@@ -8,6 +8,9 @@ from app.schemas.tourist import TouristCreate, TouristResponse, TouristAuth, Tou
 from app.schemas.tourist import touristcheckfirrequest, touristcheckfirresponse
 from typing import List, Optional
 from app.models.firregistation import FirRegistration, FIRProgress
+from app.models.tourist import complaint as ComplaintModel
+from datetime import datetime
+from app.schemas.tourist import ComplaintCreate, ComplaintResponse
 
 router = APIRouter()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/tourist/touristAuth")
@@ -74,3 +77,23 @@ def check_fir(request: touristcheckfirrequest, current_user: dict = Depends(get_
         raise HTTPException(status_code=404, detail="Progress not found for this FIR")
 
     return {"progress": progress_entry.progress}
+
+@router.post("/file_complaint", response_model=ComplaintResponse)
+def file_complaint(complaint: ComplaintCreate, current_user: dict = Depends(get_current_user), db: Session = Depends(get_db)):
+    tourist_id = current_user.get("tourist_id")
+    if not tourist_id:
+        raise HTTPException(status_code=401, detail="Invalid token")
+
+    new_complaint = ComplaintModel(
+        tourist_id=tourist_id,
+        crime_type=complaint.crime_type,
+        description=complaint.description,
+        location=complaint.location,
+        status=complaint.status
+    )
+    db.add(new_complaint)
+    db.commit()
+    db.refresh(new_complaint)
+
+    return {"message": "Complaint filed successfully", "complaint_id": new_complaint.complaint_id}
+

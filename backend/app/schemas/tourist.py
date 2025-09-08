@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 from typing import Optional
 from .Fir import FIRProgressResponse
+from datetime import datetime
 
 class TouristCreate(BaseModel):
 
@@ -51,3 +52,23 @@ class touristcheckfirresponse(BaseModel):
      model_config = {
         "from_attributes": True
      }
+     
+
+class ComplaintCreate(BaseModel):
+
+    crime_type: str
+    description: str
+    location: Optional[str] = None
+    status: Optional[str] = "registered"
+
+    model_config = {
+        "from_attributes": True
+    }    
+    
+class ComplaintResponse(BaseModel):
+    message: str
+    complaint_id: int
+
+    model_config = {
+        "from_attributes": True
+    }    
