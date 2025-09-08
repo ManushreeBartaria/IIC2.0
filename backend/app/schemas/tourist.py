@@ -2,7 +2,6 @@ from pydantic import BaseModel
 from typing import Optional
 
 class TouristCreate(BaseModel):
-    tourist_id: int
     aadhar_no: Optional[str] = None
     passport_no: Optional[str] = None
     password: str
@@ -32,7 +31,8 @@ class TouristAuth(BaseModel):
 
 
 class TouristAuthResponse(BaseModel):
-    message: str
+    access_token: str
+    token_type: str
 
     model_config = {
         "from_attributes": True
