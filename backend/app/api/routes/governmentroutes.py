@@ -8,7 +8,7 @@ from app.schemas.citizen import citizenCreate, citizenResponse, citizenAuth, cit
 from app.models.government import government
 from app.schemas.goverment import govermentCreate, governmentResponse, governmentAuth, governmentauthresponse
 from typing import List
- 
+from app.models.firregistation import FirRegistration as FIR
 
 router = APIRouter()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/government/governmentAuth")
