@@ -1,4 +1,6 @@
 from pydantic import BaseModel
+from typing import List
+from pydantic import BaseModel
 
 class govermentCreate(BaseModel):
     government_id: int
@@ -28,5 +30,19 @@ class governmentauthresponse(BaseModel):
     
     model_config = {
         "from_attributes": True
+    }   
+
+class governmentSearchFIRcreate(BaseModel):
+    region: str
+    
+    model_config = {
+        "from_attributes": True
     }    
+
+class GovernmentSearchFIRResponse(BaseModel):
+    firs: List[dict]   
+
+    model_config = {
+        "from_attributes": True
+    }
     
