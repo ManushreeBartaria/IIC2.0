@@ -1,5 +1,6 @@
 from pydantic import BaseModel
-
+from typing import Optional, List
+from app.schemas.Fir import FirCreate
 class govermentCreate(BaseModel):
     government_id: int
     password: str
@@ -31,3 +32,27 @@ class governmentauthresponse(BaseModel):
         "from_attributes": True
     }    
     
+class governmentsearchfir(BaseModel):
+    region:str
+     
+    model_config = {    
+        "from_attributes": True
+    }
+    
+class governmentsearchfirresponse(BaseModel):
+    fir:List[FirCreate]   
+    model_config = {    
+        "from_attributes": True
+    } 
+    
+class escalateFIRRequest(BaseModel):
+    fir_id: str
+    model_config = {
+        "from_attributes": True
+    }    
+    
+class escalateFIRResponse(BaseModel):
+    fir: FirCreate
+    model_config = {
+        "from_attributes": True
+    }    

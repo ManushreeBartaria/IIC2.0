@@ -6,8 +6,9 @@ from fastapi.security import OAuth2PasswordBearer
 from app.models.citizen import citizen
 from app.schemas.citizen import citizenCreate, citizenResponse, citizenAuth, citizenauthresponse
 from app.models.government import government
-from app.schemas.goverment import govermentCreate, governmentResponse, governmentAuth, governmentauthresponse
+from app.schemas.goverment import govermentCreate, governmentResponse, governmentAuth, governmentauthresponse, governmentsearchfir, governmentsearchfirresponse, escalateFIRRequest, escalateFIRResponse
 from typing import List
+from app.models.firregistation import FirRegistration
 
 router = APIRouter()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/government/governmentAuth")
@@ -36,3 +37,15 @@ def governmentauth(government_member: governmentAuth, db: Session = Depends(get_
       raise HTTPException(status_code=401, detail="Invalid credentials")
     access_token = create_access_token({"government_id": member.government_id})
     return {"access_token": access_token, "token_type": "bearer"}
+
+@router.post("/governmentsearchfir", response_model=governmentsearchfirresponse)  
+def search_fir(search: governmentsearchfir, current_user: dict = Depends(get_current_user), db: Session = Depends(get_db)):
+    firs = db.query(FirRegistration).filter(FirRegistration.address.contains(search.region)).all()
+    return {"fir": firs}
+
+@router.post("/escalatefir", response_model=escalateFIRResponse)
+def escalate_fir(request: escalateFIRRequest, current_user: dict = Depends(get_current_user), db: Session = Depends(get_db)):
+    fir = db.query(FirRegistration).filter(FirRegistration.id == request.fir_id).first()
+    if not fir:
+        raise HTTPException(status_code=404, detail="FIR not found")
+    return {"fir": fir}
