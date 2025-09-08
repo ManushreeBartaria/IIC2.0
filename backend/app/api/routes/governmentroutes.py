@@ -8,8 +8,7 @@ from app.schemas.citizen import citizenCreate, citizenResponse, citizenAuth, cit
 from app.models.government import government
 from app.schemas.goverment import govermentCreate, governmentResponse, governmentAuth, governmentauthresponse
 from typing import List
-from app.schemas.government import governmentSearchFIRcreate, GovernmentSearchFIRResponse
-from app.models.fir import FIR   
+from app.models.firregistation import FirRegistration as FIR
 
 router = APIRouter()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/government/governmentAuth")
@@ -38,5 +37,8 @@ def governmentauth(government_member: governmentAuth, db: Session = Depends(get_
       raise HTTPException(status_code=401, detail="Invalid credentials")
     access_token = create_access_token({"government_id": member.government_id})
     return {"access_token": access_token, "token_type": "bearer"}
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> a14abff73757033af347a26746e1b980459e1dd9
