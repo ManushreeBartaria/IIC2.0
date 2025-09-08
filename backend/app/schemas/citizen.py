@@ -26,7 +26,8 @@ class citizenAuth(BaseModel):
     }
         
 class citizenauthresponse(BaseModel):
-    message: str
+    access_token: str
+    token_type: str
     
     model_config = {
         "from_attributes": True

@@ -23,7 +23,40 @@ class FirCreate(BaseModel):
 class FirResponse(BaseModel):
     message: str
     report_id: str
+    registered_by_id: int
+    registered_by_name: str
     
     model_config = {
         "from_attributes": True
     }    
+    
+
+class FIRProgressUpdate(BaseModel):
+    fir_id: str
+    progress: int
+    model_config = {
+        "from_attributes": True
+    }    
+class FIRProgressRequest(BaseModel):
+    fir_id: str 
+    model_config = {
+        "from_attributes": True
+    }    
+class FIRProgressResponse(BaseModel):
+    progress: int
+    model_config = {
+        "from_attributes": True
+    }    
+    
+class FIRCloseRequest(BaseModel):
+    fir_id: str
+    model_config = {
+        "from_attributes": True
+    }
+
+class FIRCloseResponse(BaseModel):
+    message: str
+    model_config = {
+        "from_attributes": True
+    }    
+    
